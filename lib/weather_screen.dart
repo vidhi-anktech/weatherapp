@@ -16,11 +16,11 @@ class WeatherScreen extends StatefulWidget {
 class _WeatherScreenState extends State<WeatherScreen> {
   late Future<Map<String, dynamic>> weather;
   double temp = 0;
- 
+  TextEditingController cityController = TextEditingController();
+  String city = 'Jaipur';
 
   Future<Map<String, dynamic>> getCurrentWeather() async {
     try {
-      String city = 'Jaipur';
       final result = await http.get(Uri.parse(
           "https://api.openweathermap.org/data/2.5/forecast?q=$city&APPID=$openWeatherApiKey"));
       final data = jsonDecode(result.body);
@@ -34,7 +34,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
       throw e.toString();
     }
   }
-   @override
+
+  @override
   void initState() {
     super.initState();
     weather = getCurrentWeather();
@@ -87,7 +88,37 @@ class _WeatherScreenState extends State<WeatherScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-              
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: SizedBox(
+                      width: 200,
+                      height: 45,
+                      child: TextField(
+                        // textAlignVertical: TextAlignVertical.center,
+                        textAlign: TextAlign.center,
+                        controller: cityController,
+                        decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                city = cityController.text.toString();
+                                weather = getCurrentWeather();
+                              });
+                            },
+                            icon:const Icon(Icons.send),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          ),
+                          hintText: "Enter your city",
+                          fillColor: Color.fromARGB(255, 109, 105, 105),
+                          filled: true,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20,),
                   // box1(),
                   Container(
                     decoration: BoxDecoration(
